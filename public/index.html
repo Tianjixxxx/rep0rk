@@ -1,195 +1,863 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" data-theme="light">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Share Boost • Autumn</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook Share Tool</title>
+    <link rel="icon" type="image/x-icon" href="#" id="favicon">
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --border-color: #dee2e6;
+            --primary-color: #1877f2;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --shadow: 0 2px 4px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/lucide@latest"></script>
+        [data-theme="dark"] {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --text-primary: #f8f9fa;
+            --text-secondary: #adb5bd;
+            --border-color: #495057;
+            --primary-color: #1877f2;
+            --shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
 
-<script>
-tailwind.config = {
-  darkMode: 'class',
-  theme: {
-    extend: {
-      fontFamily: { poppins: ['Poppins', 'sans-serif'] },
-      colors: {
-        autumn: '#C2410C',
-        autumnDark: '#9A3412',
-        bgDark: '#1C1917',
-        cardDark: '#292524'
-      },
-      boxShadow: {
-        leaf: '0 0 18px rgba(249,115,22,.35)'
-      }
-    }
-  }
-}
-</script>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<style>
-body {
-  font-family: Poppins;
-  overflow-x: hidden;
-}
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: var(--transition);
+        }
 
-.leaf {
-  position: fixed;
-  top: -10%;
-  font-size: 22px;
-  pointer-events: none;
-  animation: fall linear infinite, sway ease-in-out infinite;
-  z-index: 9999 ;
-}
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-@keyframes fall {
-  to { transform: translateY(120vh) rotate(360deg); }
-}
-@keyframes sway {
-  0% { margin-left: 0 }
-  50% { margin-left: 60px }
-  100% { margin-left: 0 }
-}
-</style>
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 24px;
+            padding: 10px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--bg-secondary);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        @media (min-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .card {
+            background-color: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .card h2 {
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h2 i {
+            color: var(--primary-color);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        textarea, input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        textarea:focus, input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(24, 119, 242, 0.1);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: monospace;
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+        }
+
+        .btn-block {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .progress-container {
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            height: 20px;
+            background-color: var(--bg-primary);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .history-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .history-item:hover {
+            background-color: var(--bg-primary);
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-left: 10px;
+        }
+
+        .status-processing {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
+        .status-completed {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .status-failed {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .donation-section {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+        }
+
+        .donation-section h3 {
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        .qr-placeholder {
+            width: 200px;
+            height: 200px;
+            background-color: var(--bg-primary);
+            border: 2px dashed var(--border-color);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: var(--text-secondary);
+        }
+
+        .qr-placeholder i {
+            font-size: 48px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background-color: var(--bg-primary);
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        .alert {
+            padding: 12px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            margin-left: 5px;
+        }
+
+        .tooltip i {
+            color: var(--text-secondary);
+            cursor: help;
+        }
+
+        .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            text-align: center;
+            padding: 10px;
+            border-radius: 6px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+<body>
+    <!-- Privacy Policy Modal -->
+    <div id="privacyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-shield-alt"></i> Privacy Policy</h2>
+                <button class="modal-close" onclick="closePrivacyModal()">&times;</button>
+            </div>
+            <div class="privacy-content">
+                <p><strong>Last Updated:</strong> <span id="currentDate"></span></p>
+                <h3>Data Collection and Usage</h3>
+                <p>We respect your privacy. This tool operates entirely on your browser and server. We do not:</p>
+                <ul>
+                    <li>Store your Facebook cookies on our servers</li>
+                    <li>Share your data with third parties</li>
+                    <li>Use your information for any purpose other than the intended functionality</li>
+                </ul>
+                <h3>How It Works</h3>
+                <p>Your Facebook cookie is used temporarily to generate an access token for sharing posts. The token and cookie are not stored permanently.</p>
+                <h3>Disclaimer</h3>
+                <p>This tool is for educational purposes only. Use it responsibly and in accordance with Facebook's Terms of Service.</p>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="agreeCheckbox">
+                        I agree to the Privacy Policy and understand the risks
+                    </label>
+                </div>
+                <button class="btn btn-block" onclick="acceptPrivacyPolicy()">
+                    <i class="fas fa-check"></i> Accept and Continue
+                </button>
+            </div>
+        </div>
+    </div>
 
-<body class="bg-bgDark text-gray-100">
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fab fa-facebook-square"></i> Share Tool
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+                <i class="fas fa-moon" id="themeIcon"></i>
+            </button>
+        </header>
 
-<div id="overlay" class="fixed inset-0 bg-black/50 hidden z-40" onclick="toggleMenu()"></div>
+        <div class="alert" id="alertMessage"></div>
 
-<aside id="sidebar"
-  class="fixed top-0 left-0 h-full w-64 bg-cardDark border-r border-orange-800
-         transform -translate-x-full transition-transform duration-300 z-50">
+        <div class="main-content">
+            <!-- Share Tool Section -->
+            <div class="card">
+                <h2><i class="fas fa-share-alt"></i> Share Tool</h2>
+                <form id="shareForm">
+                    <div class="form-group">
+                        <label for="cookie">
+                            Facebook Cookie 
+                            <span class="tooltip">
+                                <i class="fas fa-question-circle"></i>
+                                <span class="tooltip-text">Get this from browser DevTools → Application → Cookies → c_user and xs values</span>
+                            </span>
+                        </label>
+                        <textarea 
+                            id="cookie" 
+                            placeholder="Paste your Facebook cookie here (c_user=...; xs=...)" 
+                            required></textarea>
+                    </div>
 
-  <div class="p-4 border-b border-orange-800 flex items-center justify-between">
-    <h2 class="text-lg font-semibold text-orange-400">🍁 Menu</h2>
-    <button onclick="toggleMenu()">
-      <i data-lucide="x"></i>
-    </button>
-  </div>
+                    <div class="form-group">
+                        <label for="link">Post Link</label>
+                        <input 
+                            type="url" 
+                            id="link" 
+                            placeholder="https://www.facebook.com/username/posts/..." 
+                            required>
+                    </div>
 
-  <nav class="p-4 space-y-3">
-    <a href="/" class="flex items-center gap-2 p-2 rounded hover:bg-orange-900/30">
-      <i data-lucide="home"></i> Home
-    </a>
+                    <div class="form-group">
+                        <label for="limit">Number of Shares (1-50)</label>
+                        <input 
+                            type="number" 
+                            id="limit" 
+                            min="1" 
+                            max="50" 
+                            value="10" 
+                            required>
+                    </div>
 
-    <a href="/cookie-tutorial.html"
-       class="flex items-center gap-2 p-2 rounded hover:bg-orange-900/30">
-      <i data-lucide="book-open"></i> Tutorial
-    </a>
-  </nav>
-</aside>
+                    <div class="progress-container" id="progressContainer" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <div class="progress-text">
+                            <span id="currentProgress">0</span>
+                            <span id="totalProgress">0</span>
+                        </div>
+                    </div>
 
-<div class="max-w-md mx-auto min-h-screen pb-20 relative z-10">
+                    <button type="submit" class="btn btn-block" id="shareBtn">
+                        <i class="fas fa-rocket"></i> Start Sharing
+                    </button>
+                </form>
+            </div>
 
-<header class="p-4 border-b border-orange-900 sticky top-0 bg-bgDark z-30 flex items-center gap-3">
-  <button onclick="toggleMenu()">
-    <i data-lucide="menu"></i>
-  </button>
+            <!-- Current Running Shares Section -->
+            <div class="card">
+                <h2><i class="fas fa-sync-alt"></i> Current Running Shares</h2>
+                <div id="runningShares" class="history-list">
+                    <div class="loading" id="runningLoading">
+                        <div class="spinner"></div>
+                        <p>Loading...</p>
+                    </div>
+                    <div id="runningContent" style="display: none;">
+                        <!-- Running shares will be inserted here -->
+                    </div>
+                    <p id="noRunningShares">No active shares at the moment.</p>
+                </div>
+                <button class="btn btn-block" onclick="loadRunningShares()">
+                    <i class="fas fa-redo"></i> Refresh
+                </button>
+            </div>
 
-  <h1 class="text-xl font-semibold text-orange-400 flex items-center gap-2">
-    🍁 Share Boost
-  </h1>
-</header>
+            <!-- History Section -->
+            <div class="card">
+                <h2><i class="fas fa-history"></i> Share History</h2>
+                <div id="historyList" class="history-list">
+                    <div class="loading" id="historyLoading">
+                        <div class="spinner"></div>
+                        <p>Loading...</p>
+                    </div>
+                    <div id="historyContent" style="display: none;">
+                        <!-- History items will be inserted here -->
+                    </div>
+                </div>
+                <button class="btn btn-block" onclick="loadHistory()">
+                    <i class="fas fa-redo"></i> Refresh History
+                </button>
+            </div>
 
-<main class="p-4 space-y-4">
+            <!-- Donation Section -->
+            <div class="card donation-section">
+                <h2><i class="fas fa-heart"></i> Support This Project</h2>
+                <p>If you find this tool helpful, consider supporting its development:</p>
+                
+                <div class="qr-placeholder">
+                    <i class="fas fa-qrcode"></i>
+                </div>
+                <p>Scan to donate via GCash</p>
+                <p><small>Your support helps keep this tool free and improved!</small></p>
+                
+                <div style="margin-top: 20px;">
+                    <button class="btn btn-success" onclick="copyDonationInfo()">
+                        <i class="fas fa-copy"></i> Copy GCash Number
+                    </button>
+                </div>
+            </div>
+        </div>
 
-<form id="shareForm" class="space-y-4">
-  <textarea id="cookie" rows="3" placeholder="Facebook Cookie String"
-    class="w-full p-3 rounded-lg bg-cardDark border border-orange-800"></textarea>
+        <footer>
+            <p>© 2024 Facebook Share Tool | For Educational Purposes Only</p>
+            <p style="margin-top: 10px;">
+                <a href="#" style="color: var(--primary-color); text-decoration: none;" onclick="showPrivacyModal()">
+                    <i class="fas fa-shield-alt"></i> Privacy Policy
+                </a>
+            </p>
+        </footer>
+    </div>
 
-  <input id="link" type="url" placeholder="Facebook Post Link"
-    class="w-full p-3 rounded-lg bg-cardDark border border-orange-800">
+    <script>
+        // Theme Management
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+            const favicon = document.getElementById('favicon');
+            
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.setAttribute('data-theme', 'light');
+                themeIcon.className = 'fas fa-moon';
+                favicon.href = '#';
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+                favicon.href = '#';
+            }
+            localStorage.setItem('theme', html.getAttribute('data-theme'));
+        }
 
-  <div class="grid grid-cols-2 gap-3">
-    <input id="count" type="number" placeholder="Shares"
-      class="p-3 rounded-lg bg-cardDark border border-orange-800">
-    <input id="delay" type="number" placeholder="Delay (input 1)"
-      class="p-3 rounded-lg bg-cardDark border border-orange-800">
-  </div>
+        // Load saved theme
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            document.getElementById('themeIcon').className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            
+            // Set current date in privacy policy
+            document.getElementById('currentDate').textContent = new Date().toLocaleDateString();
+            
+            // Show privacy modal on first visit
+            if (!localStorage.getItem('privacyAccepted')) {
+                setTimeout(showPrivacyModal, 500);
+            }
+            
+            // Load history and running shares
+            loadHistory();
+            loadRunningShares();
+        });
 
-  <button id="startBtn"
-    class="w-full bg-autumn hover:bg-autumnDark py-3 rounded-lg font-semibold shadow-leaf flex justify-center gap-2">
-    <i data-lucide="rocket"></i> Start Boost
-  </button>
-</form>
+        // Privacy Modal Functions
+        function showPrivacyModal() {
+            document.getElementById('privacyModal').style.display = 'flex';
+        }
 
-<div id="result" class="text-center mt-3"></div>
-</main>
-</div>
+        function closePrivacyModal() {
+            document.getElementById('privacyModal').style.display = 'none';
+        }
 
-<script>
-lucide.createIcons();
+        function acceptPrivacyPolicy() {
+            if (document.getElementById('agreeCheckbox').checked) {
+                localStorage.setItem('privacyAccepted', 'true');
+                closePrivacyModal();
+            } else {
+                alert('Please agree to the Privacy Policy to continue.');
+            }
+        }
 
-const form = document.getElementById("shareForm");
-const btn = document.getElementById("startBtn");
-const result = document.getElementById("result");
+        // Share Form Submission
+        document.getElementById('shareForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!localStorage.getItem('privacyAccepted')) {
+                alert('Please accept the Privacy Policy first.');
+                showPrivacyModal();
+                return;
+            }
+            
+            const cookie = document.getElementById('cookie').value.trim();
+            const link = document.getElementById('link').value.trim();
+            const limit = document.getElementById('limit').value;
+            
+            if (!cookie || !link || !limit) {
+                showAlert('Please fill all fields', 'error');
+                return;
+            }
+            
+            // Start sharing process
+            const shareBtn = document.getElementById('shareBtn');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressFill = document.getElementById('progressFill');
+            const currentProgress = document.getElementById('currentProgress');
+            const totalProgress = document.getElementById('totalProgress');
+            
+            shareBtn.disabled = true;
+            shareBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            progressContainer.style.display = 'block';
+            progressFill.style.width = '0%';
+            currentProgress.textContent = '0';
+            totalProgress.textContent = limit;
+            
+            try {
+                const response = await fetch('/api/share', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        cookie: cookie,
+                        link: link,
+                        limit: limit
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.status) {
+                    showAlert(data.message, 'success');
+                    // Simulate progress (in real app, you'd use WebSocket for real-time updates)
+                    simulateProgress(limit, progressFill, currentProgress);
+                    
+                    // Wait a bit then reload history
+                    setTimeout(() => {
+                        loadHistory();
+                        loadRunningShares();
+                    }, 1000);
+                } else {
+                    showAlert(data.message, 'error');
+                }
+            } catch (error) {
+                showAlert('Network error. Please try again.', 'error');
+                console.error('Share error:', error);
+            } finally {
+                shareBtn.disabled = false;
+                shareBtn.innerHTML = '<i class="fas fa-rocket"></i> Start Sharing';
+                
+                // Hide progress after completion
+                setTimeout(() => {
+                    progressContainer.style.display = 'none';
+                }, 3000);
+            }
+        });
 
-form.addEventListener("submit", async e => {
-  e.preventDefault();
+        // Simulate progress (for demonstration)
+        function simulateProgress(limit, progressFill, currentProgress) {
+            let current = 0;
+            const interval = setInterval(() => {
+                current++;
+                const percentage = (current / limit) * 100;
+                progressFill.style.width = `${Math.min(percentage, 100)}%`;
+                currentProgress.textContent = current;
+                
+                if (current >= limit) {
+                    clearInterval(interval);
+                }
+            }, 500);
+        }
 
-  const cookie = document.getElementById("cookie").value.trim();
-  const link = document.getElementById("link").value.trim();
-  const count = Number(document.getElementById("count").value);
-  const delay = Number(document.getElementById("delay").value);
+        // Load Share History
+        async function loadHistory() {
+            const historyLoading = document.getElementById('historyLoading');
+            const historyContent = document.getElementById('historyContent');
+            
+            historyLoading.style.display = 'block';
+            historyContent.style.display = 'none';
+            
+            try {
+                const response = await fetch('/api/history');
+                const data = await response.json();
+                
+                if (data.status && data.history.length > 0) {
+                    const historyHTML = data.history.map(item => `
+                        <div class="history-item">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <strong>${item.link.substring(0, 50)}...</strong>
+                                    <span class="history-status status-${item.status}">
+                                        ${item.status}
+                                    </span>
+                                </div>
+                                <div style="font-size: 12px; color: var(--text-secondary);">
+                                    ${new Date(item.startTime).toLocaleTimeString()}
+                                </div>
+                            </div>
+                            <div style="margin-top: 8px; font-size: 14px; color: var(--text-secondary);">
+                                Success: ${item.success}/${item.requested} shares
+                                ${item.endTime ? ` | Duration: ${Math.round((new Date(item.endTime) - new Date(item.startTime)) / 1000)}s` : ''}
+                            </div>
+                        </div>
+                    `).join('');
+                    
+                    historyContent.innerHTML = historyHTML;
+                    historyContent.style.display = 'block';
+                    historyLoading.style.display = 'none';
+                } else {
+                    historyLoading.style.display = 'none';
+                    historyContent.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No share history yet.</p>';
+                    historyContent.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error loading history:', error);
+                historyLoading.style.display = 'none';
+                historyContent.innerHTML = '<p style="text-align: center; color: var(--danger-color);">Error loading history.</p>';
+                historyContent.style.display = 'block';
+            }
+        }
 
-  if (!cookie || !link || count <= 0 || delay < 0) {
-    result.innerHTML = `
-      <div class="bg-red-900/30 border border-red-700 p-3 rounded">
-        ❌ Please fill all fields correctly
-      </div>`;
-    return;
-  }
+        // Load Running Shares
+        async function loadRunningShares() {
+            const runningLoading = document.getElementById('runningLoading');
+            const runningContent = document.getElementById('runningContent');
+            const noRunningShares = document.getElementById('noRunningShares');
+            
+            runningLoading.style.display = 'block';
+            runningContent.style.display = 'none';
+            noRunningShares.style.display = 'none';
+            
+            try {
+                const response = await fetch('/api/running-shares');
+                const data = await response.json();
+                
+                if (data.status && data.running_shares.length > 0) {
+                    const runningHTML = data.running_shares.map(item => `
+                        <div class="history-item">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <strong>${item.link.substring(0, 50)}...</strong>
+                                    <span class="history-status status-processing">
+                                        processing
+                                    </span>
+                                </div>
+                                <div style="font-size: 12px; color: var(--text-secondary);">
+                                    ${new Date(item.startTime).toLocaleTimeString()}
+                                </div>
+                            </div>
+                            <div style="margin-top: 8px;">
+                                <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 5px;">
+                                    Progress: ${item.success}/${item.requested} shares
+                                </div>
+                                <div style="height: 5px; background-color: var(--border-color); border-radius: 3px; overflow: hidden;">
+                                    <div style="height: 100%; width: ${(item.success / item.requested) * 100}%; background-color: var(--primary-color); transition: width 0.3s;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                    
+                    runningContent.innerHTML = runningHTML;
+                    runningContent.style.display = 'block';
+                    noRunningShares.style.display = 'none';
+                } else {
+                    runningContent.style.display = 'none';
+                    noRunningShares.style.display = 'block';
+                }
+                runningLoading.style.display = 'none';
+            } catch (error) {
+                console.error('Error loading running shares:', error);
+                runningLoading.style.display = 'none';
+                runningContent.style.display = 'none';
+                noRunningShares.style.display = 'block';
+            }
+        }
 
-  btn.disabled = true;
-  btn.textContent = "🚀 Boosting...";
-  result.innerHTML = "";
+        // Auto-refresh running shares every 10 seconds
+        setInterval(loadRunningShares, 10000);
 
-  try {
-    const params = new URLSearchParams({ cookie, link, count, delay });
-    const res = await fetch(`/tools/shareboost?${params}`);
-    const data = await res.json();
+        // Donation Functions
+        function copyDonationInfo() {
+            navigator.clipboard.writeText('09171234567')
+                .then(() => {
+                    showAlert('GCash number copied to clipboard!', 'success');
+                })
+                .catch(err => {
+                    showAlert('Failed to copy: ' + err, 'error');
+                });
+        }
 
-    if (data.status !== "success") throw new Error(data.message);
+        // Alert Functions
+        function showAlert(message, type) {
+            const alertDiv = document.getElementById('alertMessage');
+            alertDiv.textContent = message;
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                alertDiv.style.display = 'none';
+            }, 5000);
+        }
 
-    result.innerHTML = `
-      <div class="bg-green-900/30 border border-green-700 p-3 rounded">
-        ✅ Successfully <b>${data.shared}</b> shared
-      </div>`;
-  } catch (err) {
-    result.innerHTML = `
-      <div class="bg-red-900/30 border border-red-700 p-3 rounded">
-        ❌ ${err.message}
-      </div>`;
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = `<i data-lucide="rocket"></i> Start Boost`;
-    lucide.createIcons();
-  }
-});
-
-function toggleMenu() {
-  const sidebar = document.getElementById("sidebar");
-  const overlay = document.getElementById("overlay");
-
-  sidebar.classList.toggle("-translate-x-full");
-  overlay.classList.toggle("hidden");
-}
-
-const icons = ["🍁","🍂","🍃"];
-setInterval(() => {
-  const leaf = document.createElement("div");
-  leaf.className = "leaf";
-  leaf.textContent = icons[Math.floor(Math.random()*icons.length)];
-  leaf.style.left = Math.random()*100 + "vw";
-  leaf.style.animationDuration =
-    (6 + Math.random()*6) + "s, " + (3 + Math.random()*4) + "s";
-  document.body.appendChild(leaf);
-  setTimeout(() => leaf.remove(), 15000);
-}, 350);
-</script>
-
+        // Auto-load history every 30 seconds
+        setInterval(loadHistory, 30000);
+    </script>
 </body>
 </html>
